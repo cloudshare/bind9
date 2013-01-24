@@ -1,0 +1,19 @@
+$ORIGIN .
+$TTL <%= @global_ttl %>
+<%= @domain %>. IN SOA <%= @master_nameserver['name'] %>. <%= @contact %>.<%= @domain %>. (
+                <%= @serial %> ; serial [secs since epoch]
+                1M      ; refresh
+                1M      ; retry
+                1H      ; expiry
+                1M      ; minimum
+);
+
+                NS <%= @master_nameserver['name'] %>.
+
+$ORIGIN <%= @domain %>.
+
+<%= @master_nameserver['name'].split('.')[0] %>    A <%= @master_nameserver['ip'] %>
+
+<% @records.each do |record| -%>
+<%= "%-20s %5s %s" % [ record['name'], record['type'], record['ip'] ] %>
+<% end %>

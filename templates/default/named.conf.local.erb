@@ -1,0 +1,23 @@
+//
+// Do any local configuration here
+//
+
+// Consider adding the 1918 zones here, if they are not used in your
+// organization
+//include "/etc/bind/zones.rfc1918";
+
+include "/etc/bind/rndc.key";
+
+<% updaters = @zones.collect { |domain, zone| zone['updaters']}.flatten %>
+
+controls {
+    inet * allow { <%= updaters * '; ' %>; } keys { "rndc-key" ;};
+};
+
+<% @zones.each do |domain, zone| -%>
+zone "<%= domain %>" {
+    type <%= zone['type'] %>;
+    file "<%= node['bind9']['data_dir'] %>/<%= domain %>.db";
+    allow-update { key "rndc-key"; };
+};
+<% end %>
